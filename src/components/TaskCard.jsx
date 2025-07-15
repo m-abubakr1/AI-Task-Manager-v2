@@ -1,3 +1,4 @@
+// src/components/TaskCard.jsx
 import { useDraggable } from "@dnd-kit/core";
 import { GripVertical } from "lucide-react";
 
@@ -18,62 +19,51 @@ function TaskCard({ task, onEdit, onDelete }) {
       {...listeners}
       {...attributes}
       style={style}
-      className="bg-white p-3 rounded mb-2 shadow cursor-grab"
+      className="bg-white dark:bg-gray-800 text-sm rounded shadow p-3 cursor-grab"
     >
-      <div className="flex justify-between items-start gap-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <GripVertical className="text-gray-400" size={16} />
-            <strong>{task.title}</strong>
-          </div>
-          {task.description && (
-            <p className="text-sm text-gray-600 mb-1">{task.description}</p>
-          )}
-          {task.due_date && (
-            <p className="text-xs text-gray-400">Due: {task.due_date}</p>
-          )}
-          <div className="flex flex-wrap gap-1 mt-2">
-            {(task.tags || []).map((tag) => (
-              <span
-                key={tag.name}
-                className={`text-xs px-2 py-1 rounded ${
-                  {
-                    red: "bg-red-100 text-red-800",
-                    blue: "bg-blue-100 text-blue-800",
-                    green: "bg-green-100 text-green-800",
-                    yellow: "bg-yellow-100 text-yellow-800",
-                    purple: "bg-purple-100 text-purple-800",
-                    gray: "bg-gray-100 text-gray-800",
-                  }[tag.color] || "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
+      <div className="flex justify-between items-center mb-1">
+        <div className="flex items-center gap-2">
+          <GripVertical className="w-4 h-4 text-gray-400" />
+          <strong>{task.title}</strong>
         </div>
-
-        <div className="flex flex-col items-end gap-1 text-sm">
+        <div className="flex gap-2 text-xs">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(task);
-            }}
-            className="text-blue-600 hover:underline"
+            onClick={() => onEdit(task)}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             Edit
           </button>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(task.id);
-            }}
-            className="text-red-600 hover:underline"
+            onClick={() => onDelete(task.id)}
+            className="text-red-600 dark:text-red-400 hover:underline"
           >
             Delete
           </button>
         </div>
       </div>
+      {task.description && (
+        <p className="mb-1 text-gray-600 dark:text-gray-300">
+          {task.description}
+        </p>
+      )}
+      {task.due_date && (
+        <p className="text-xs text-gray-500">
+          Due: {new Date(task.due_date).toLocaleDateString()}
+        </p>
+      )}
+      {task.tags && task.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {task.tags.map((tag, idx) => (
+            <span
+              key={idx}
+              className="text-xs px-2 py-1 rounded"
+              style={{ backgroundColor: tag.color || "#ddd", color: "#000" }}
+            >
+              {tag.label}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
