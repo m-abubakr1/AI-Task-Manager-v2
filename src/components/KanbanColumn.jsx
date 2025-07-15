@@ -1,23 +1,38 @@
+// src/components/KanbanColumn.jsx
+import TaskCard from "./TaskCard.jsx";
 import { useDroppable } from "@dnd-kit/core";
-import TaskCard from "./TaskCard";
 
-function KanbanColumn({ id, title, tasks, onEdit, onDelete }) {
-  const { setNodeRef } = useDroppable({ id });
+function KanbanColumn({ title, tasks, onEdit, onDelete }) {
+  const { setNodeRef } = useDroppable({
+    id: title,
+    data: {
+      status: title,
+    },
+  });
+
+  const titleMap = {
+    todo: "To Do",
+    in_progress: "In Progress",
+    done: "Done",
+    notes: "Notes",
+  };
 
   return (
     <div
       ref={setNodeRef}
-      className="w-full sm:w-1/4 bg-gray-100 p-3 rounded min-h-[300px]"
+      className="bg-gray-200 dark:bg-gray-700 p-4 rounded h-full min-h-[400px]"
     >
-      <h2 className="text-lg font-semibold mb-3">{title}</h2>
-      {tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+      <h2 className="text-lg font-semibold mb-2">{titleMap[title] || title}</h2>
+      <div className="space-y-3">
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
     </div>
   );
 }
