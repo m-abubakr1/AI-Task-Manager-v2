@@ -1,46 +1,30 @@
 // src/components/Sidebar.jsx
+import { useState } from "react";
 
-function Sidebar({ allTags, activeTag, onSelectTag, onClearFilter }) {
+function Sidebar() {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
-    <aside className="w-full sm:w-60 p-4 bg-gray-50 border-r mb-4 sm:mb-0 sm:mr-4 rounded shadow-sm">
-      <h2 className="font-semibold text-lg mb-4">🎯 Filter by Tag</h2>
-
-      <ul className="flex sm:flex-col flex-wrap gap-2">
-        {allTags.map((tag) => {
-          const isActive = activeTag === tag.name;
-          return (
-            <li key={tag.name}>
-              <button
-                onClick={() => {
-                  onSelectTag(tag.name);
-                  window.scrollTo({ top: 0, behavior: "smooth" }); // UX polish
-                }}
-                className={`flex items-center gap-2 text-sm px-3 py-1 rounded-full transition-all duration-150 border shadow-sm
-                  ${
-                    isActive
-                      ? "bg-black text-white border-black"
-                      : `bg-white text-${tag.color}-700 border-${tag.color}-300 hover:bg-${tag.color}-50`
-                  }
-                `}
-              >
-                <span
-                  className={`w-3 h-3 rounded-full bg-${tag.color}-500`}
-                ></span>
-                {tag.name}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      {activeTag && (
-        <button
-          onClick={onClearFilter}
-          className="mt-4 text-sm text-gray-600 hover:underline"
-        >
-          ❌ Clear Filter
+    <aside
+      className={`bg-white dark:bg-gray-800 border-r dark:border-gray-700 transition-all duration-300 ${
+        isOpen ? "w-64" : "w-16"
+      } h-full`}
+    >
+      <div className="flex justify-between items-center p-4">
+        <h2 className="text-lg font-bold">{isOpen ? "Filters" : "F"}</h2>
+        <button onClick={() => setIsOpen(!isOpen)} className="text-sm">
+          {isOpen ? "⏴" : "⏵"}
         </button>
-      )}
+      </div>
+
+      {/* Future filters like tag/category will go here */}
+      <div className="px-4">
+        {isOpen && (
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Coming soon...
+          </p>
+        )}
+      </div>
     </aside>
   );
 }
