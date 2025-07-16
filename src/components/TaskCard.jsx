@@ -1,69 +1,93 @@
-// src/components/TaskCard.jsx
 import { useDraggable } from "@dnd-kit/core";
 import { GripVertical } from "lucide-react";
 
 function TaskCard({ task, onEdit, onDelete }) {
+  // Make this card draggable using its unique ID
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
   });
 
+  // CSS transform for smooth dragging
   const style = {
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
       : undefined,
   };
 
+  // 🛠 Stop clicks from interfering with drag
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    onEdit(task);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete(task.id);
+  };
+
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
       style={style}
-      className="bg-white dark:bg-gray-800 text-sm rounded shadow p-3 cursor-grab"
+      className="bg-white dark:bg-zinc-800 p-3 rounded mb-2 shadow relative"
     >
       <div className="flex justify-between items-center mb-1">
-        <div className="flex items-center gap-2">
-          <GripVertical className="w-4 h-4 text-gray-400" />
-          <strong>{task.title}</strong>
-        </div>
-        <div className="flex gap-2 text-xs">
-          <button
-            onClick={() => onEdit(task)}
-            className="text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(task.id)}
-            className="text-red-600 dark:text-red-400 hover:underline"
-          >
-            Delete
-          </button>
+        <strong className="text-sm text-zinc-800 dark:text-white">
+          {task.title}
+        </strong>
+
+        {/* 🟢 Drag Icon — only this is draggable */}
+        <div
+          {...listeners}
+          {...attributes}
+          className="cursor-grab text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        >
+          <GripVertical size={18} />
         </div>
       </div>
+
+      {/* Optional Description */}
       {task.description && (
-        <p className="mb-1 text-gray-600 dark:text-gray-300">
+        <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">
           {task.description}
         </p>
       )}
+
+      {/* Due Date */}
       {task.due_date && (
-        <p className="text-xs text-gray-500">
+        <p className="text-[11px] text-blue-600 dark:text-blue-400 italic mb-1">
           Due: {new Date(task.due_date).toLocaleDateString()}
         </p>
       )}
-      {task.tags && task.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {task.tags.map((tag, idx) => (
-            <span
-              key={idx}
-              className="text-xs px-2 py-1 rounded"
-              style={{ backgroundColor: tag.color || "#ddd", color: "#000" }}
-            >
-              {tag.label}
-            </span>
-          ))}
-        </div>
-      )}
+
+      {/* Tags (if exist) */}
+      <div className="flex flex-wrap gap-1 mb-2">
+        {task.tags?.map((tag, index) => (
+          <span
+            key={index}
+            className="text-xs px-2 py-0.5 rounded-full text-white"
+            style={{ backgroundColor: tag.color || "#3b82f6" }}
+          >
+            {tag.label}
+          </span>
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3 text-sm">
+        <button
+          onClick={handleEdit}
+          className="text-blue-600 hover:underline dark:text-blue-400"
+        >
+          Edit
+        </button>
+        <button
+          onClick={handleDelete}
+          className="text-red-600 hover:underline dark:text-red-400"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
